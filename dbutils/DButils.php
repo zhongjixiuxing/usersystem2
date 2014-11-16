@@ -1,23 +1,23 @@
 <?php
-	
+
 /**
  * 数据库链接帮助类；
- * 	
- * 
+ *
+ *
  * Enter description here ...
  * @author chuanxing
  *
  */
 	class DButils{
-		private $db_url = "localhost:4000";
+		private $db_url = "localhost";
 		private $uname = "root";
 		private $pw = "root";
 		private static $conn;
 		public static $dbutil;
 		private static $db = "usersystem2";
-		
+
 		/**
-		 * 
+		 *
 		 * Enter description here ...
 		 * @param $url 服务器路径
 		 * @param $name 管理员用户名
@@ -30,7 +30,7 @@
 			}
 			mysql_select_db(self::$db, self::$conn);
 		}
-		
+
 		/**
 		 * 获取数据库帮助类的实例
 		 * Enter description here ...
@@ -41,7 +41,7 @@
 			 }
 			return self::$dbutil;
 		}
-		
+
 		/**
 		 * 获取全局唯一的数据库链接对象
 		 * 		默认返回的链接是操作hang数据库；
@@ -53,10 +53,10 @@
 				mysql_select_db(self::$db, DButils::$conn);
 echo '确认数据库已经选择了hang';
 			}
-			
+
 			return DButils::$conn;
 		}
-		
+
 		/**
 		 * 关闭链接
 		 * Enter description here ...
@@ -65,7 +65,7 @@ echo '确认数据库已经选择了hang';
 			if(DButils::$conn)
 				mysql_close(DButils::$conn);
 		}
-		
+
 		/**
 		 * 改变操作的数据库
 		 * Enter description here ...
@@ -73,7 +73,7 @@ echo '确认数据库已经选择了hang';
 		 */
 		function changDataBase($dbName){
 			$this->db = $dbName;
-			
+
 			mysql_select_db($dbName, DButils::$conn);
 		}
 	}

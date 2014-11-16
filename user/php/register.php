@@ -96,7 +96,6 @@
 		}
 		
 		
-		
 		//验证码校验 
 		$len2 = strlen($validateCode);
 		if(!CheckEmptyString($repw)){
