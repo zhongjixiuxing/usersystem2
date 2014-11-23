@@ -1,16 +1,24 @@
 <?PHP
-
-
-    $requesturl="https://graph.qq.com/user/get_user_info?access_token=6923220BE94A08F6E375873BF7F88E6F&openid=744A301EE82A8A49D82535160CE11ABE&oauth_consumer_key=101168159";
-    $ch=curl_init($requesturl);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);  //设置连接请求时不验证证书和主机
-	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $cexecute=curl_exec($ch);  //执行请求，并获取请求结果
-    curl_close($ch);       //关闭连接
-    
-    $result = json_decode($cexecute,true);  //进行json逆转格式化
+echo "sssss".print_r(curl_version());
+//　　$ch = curl_init();
 //
-//    print_r($result);
-    echo "nickname: ".$result[nickname];
+//　　//设置选项，包括URL
+////　　curl_setopt($ch, CURLOPT_URL, "https://graph.qq.com/user/get_user_info?access_token=6923220BE94A08F6E375873BF7F88E6F&openid=744A301EE82A8A49D82535160CE11ABE&oauth_consumer_key=101168159");
+//　　curl_setopt($ch, CURLOPT_URL, "https://baidu.com");
+//　　curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+//　　curl_setopt($ch, CURLOPT_HEADER, 0);
+//
+//　　//执行并获取HTML文档内容
+//　　$output = curl_exec($ch);
+//
+//　　//释放curl句柄
+//　　curl_close($ch);
+//
+//　　//打印获得的数据
+//　　print_r($output);
+
+//$url ="https://graph.qq.com/user/get_user_info?access_token=6923220BE94A08F6E375873BF7F88E6F&openid=744A301EE82A8A49D82535160CE11ABE&oauth_consumer_key=101168159";
+//$client = new HttpClient();	// create a client
+//$result = $client->quickGet($url);
+//echo "result : ".$result;	// echo
 ?>
