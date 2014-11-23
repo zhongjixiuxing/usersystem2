@@ -5,24 +5,23 @@
   <meta name="Author" content="">
   <meta name="Keywords" content="">
   <meta name="Description" content="">
-  <title> 用户注册 </title>
-
+  <title> 用户登录 </title>
+  
   <link href="http://apps.bdimg.com/libs/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
   <script src="http://apps.bdimg.com/libs/jquery/2.0.0/jquery.min.js"></script>
   <script src="http://apps.bdimg.com/libs/bootstrap/3.0.3/js/bootstrap.min.js"></script>
-  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js"></script>
-  <script src="http://apps.bdimg.com/libs/angular.js/1.2.15/angular.min.js"></script>
+  <script src="http://apps.bdimg.com/libs/angular.js/1.2.15/angular.min.js"></script>  
 
 	<!-- QQ互联插件 -->
-  <script type="text/javascript" src="http://qzonestyle.gtimg.cn/qzone/openapi/qc_loader.js" data-appid="101168159"
+  <script type="text/javascript" src="http://qzonestyle.gtimg.cn/qzone/openapi/qc_loader.js" data-appid="101168159" 
 	data-redirecturi="http://anxing.wicp.net/UserSystem2/yes.php" charset="utf-8"></script>
-
+	
 	<!--<span id="qqLoginBtn"></span>-->
 <script type="text/javascript">
    //调用QC.Login方法，指定btnId参数将按钮绑定在容器节点中
    QC.Login({
        //btnId：插入按钮的节点id，必选
-       btnId:"qqLoginBtn",
+       btnId:"qqLoginBtn",    
        btnId2:'qqLoginBtnSuccess',
        //用户需要确认的scope授权项，可选，默认all
        scope:"all",
@@ -37,7 +36,7 @@
             //昵称
             '<span>{nickname}</span>',
             //退出
-            '<span><a href="javascript:QC.Login.signOut();">退出</a></span>'
+            '<span><a href="javascript:QC.Login.signOut();">退出</a></span>'    
        ].join("");
        dom && (dom.innerHTML = QC.String.format(_logoutTemplate, {
            nickname : QC.String.escHTML(reqData.nickname), //做xss过滤
@@ -58,18 +57,16 @@
 	    $scope.pw2 = '';
 
 	    $scope.error = false;   //标志整个表单的错误标志位
-	    $scope.error1 = false; //两次密码不一致
 		$scope.error2 = false; //验证码长度错误
 		$scope.error3 = false; //密码长度 （5 ~ 50）
-
-	    $scope.$watch('pw2',function() {$scope.valiPw2();})  //监视pw2变量的变化；
+		
 	    $scope.$watch('validateCode',function() {$scope.valiValidateCode();})  //监视validateCode变量的变化；
 	    $scope.$watch('pw',function(){$scope.valiPw();})  //监视pw变量的变化；
 
 		$scope.mySubmit = function(){
 			alert("mySubmit....");
 		}
-
+	    
 	    //校验密码长度
 		$scope.valiPw = function(){
 			if($scope.pw.length < 5 || $scope.pw.leng > 50){
@@ -78,7 +75,7 @@
 				$scope.error3 = false;
 			}
 		}
-
+	    
 	    //校验验证码长度
 		$scope.valiValidateCode = function(){
 			if($scope.validateCode.length !== 4){
@@ -88,46 +85,35 @@
 			}
 		};
 
-	    //检验两次密码是否一致
-	    $scope.valiPw2 = function(){
-		    $scope.error = false;
-			if($scope.pw !== $scope.pw2){
-				$scope.error1 = true;
-			}else{
-				$scope.error1 = false;
-			}
-		}
 	}
 </script>
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		$("#img_validateCode").click(function(){
+		$("#img_validateCode").click(function(){ 
 				//alert("hz");
-		        $(this).attr("src",'/UserSystem2/user/php/validateCode.php?' + Math.random());
-		});
+		        $(this).attr("src",'/UserSystem2/user/php/validateCode.php?' + Math.random()); 
+		}); 
 
 		$("#img_qq").click(function(){
-
+			alert("click");
 			$("#img_qq").addClass("over");
 		});
-		$("#qqLoginBtn").mouseover(function(){
-
-			$("#qqLoginBtn").attr("class","over");
+		$("#img_qq").mouseover(function(){
+			$("#img_qq").attr("class","over");
 		});
-		$("#qqLoginBtn").mouseleave(function(){
-
-			$("#qqLoginBtn").attr("class","leave");
+		$("#img_qq").mouseleave(function(){
+			$("#img_qq").attr("class","leave");
 		});
-
+		
 	});
 </script>
-
-
-
+  
+  
+  
   <script type="text/javascript">
   </script>
-
+  
   <style type="text/css">
   	.over{
   		border-style: solid;
@@ -140,17 +126,18 @@
   		border-color: blue;
   	}
   </style>
-
+  
  </head>
  <body ng-app="" ng-controller="validateCtrl">
 
 	<div align="center" style="margin-top: 50px;">
-
+	
 	<h1 style="color: green;">用户注册</h1>
 	<div class="container">
 	<div class="row">
 		<div class="span12">
-		<form class="form-horizontal" method="post" action="/UserSystem2/user/php/register.php" name="myForm" novalidate>
+		<form class="form-horizontal" method="post" action="/UserSystem2/user/php/login.php" name="myForm" novalidate>
+			<input type="hidden" name="login_type" value="1" />
 			<table class="table table-bordered">
 					<tbody align="center">
 						<tr>
@@ -169,22 +156,8 @@
 									</span>
 							</td>
 						</tr>
-
-						<tr >
-							<td>
-								<div class="control-group">
-									 <label class="control-label" for="inputEmail">　　邮箱 : </label>
-									<input id="inputEmail" type="email" name="email" ng-model="email" required/>
-								</div>
-							</td>
-							<td>
-									<span style="color:red" ng-show="myForm.email.$dirty && myForm.email.$invalid">
-									  	<span ng-show="myForm.email.$error.required">邮箱地址不能为空.</span>
-									  	<span ng-show="myForm.email.$error.email">非法的邮箱地址.</span>
-									</span>
-							</td>
-						</tr>
-
+						
+						
 						<tr>
 							<td>
 								<div class="control-group">
@@ -197,27 +170,11 @@
 									  	<span ng-show="myForm.pw.$error.required">密码不能为空.</span>
 									</span>
 									<span style="color:red" ng-show="!myForm.pw.$error.required && error3">密码长度必须为5 ~ 50.</span>
-
+								
 							</td>
 						</tr>
-
-						<tr>
-							<td>
-								<div class="control-group">
-									<label class="control-label" for="inputPassword">确认密码 : </label>
-									<input id="inputPassword2" type="password" name="pw2" ng-model="pw2" required/>
-								</div>
-							</td>
-
-							<td>
-									<span style="color:red" ng-show="myForm.pw2.$dirty && myForm.pw2.$invalid">
-									  	<span ng-show="myForm.pw2.$error.required">确认密码不能为空.</span>
-									</span>
-
-									<span style="color:red" ng-show="!myForm.pw2.$error.required && error1">两个密码不一致！</span>
-							</td>
-						</tr>
-						<tr>
+						
+						<!--<tr>
 							<td>
 								<div class="control-group">
 									<label class="control-label" >　　　　　验证码 : </label>
@@ -232,18 +189,28 @@
 									<span style="color:red;" ng-show="!myForm.validateCode.$error.required && error2">验证码长度错误.</span>
 							</td>
 						</tr>
-
 						<tr>
 							<td>
 								<div class="control-group">
 									<div class="controls"　>
-								 		<button type="submit" class="btn" ng-disabled="false" ng-click="mySubmit()"> 注册 </button>
-									</div>
+										<label class="checkbox"><input type="checkbox" /> Remember me</label>
+									</div> 
 								</div>
+								
+							</td>
+						</tr>	-->
+						
+						<tr>
+							<td>
+								<div class="control-group">
+									
+								 		<button type="submit" class="btn" ng-disabled="false" ng-click="mySubmit()"> 登录 </button>
+									</div>
+								</div> 
 							</td>
 						</tr>
 						<tr>
-							<td>其他账号登陆：<span id="qqLoginBtn"><img src="/UserSystem2/image/qq.jpg" id="img_qq"><span></span></td>
+							<td>其他账号登陆：<span id="qqLoginBtn"><img src="/UserSystem2/image/qq.jpg" id="img_qq"></img></span></td>
 						</tr>
 					</tbody>
 			</table>
@@ -251,12 +218,12 @@
 		</div>
 	</div>
 </div>
-		</div>
-
-	<a title="QQ登录" href="javascript:void(0);"
+		</div>				 
+	
+	<a title="QQ登录" href="javascript:void(0);" 
 	onclick="location.href='http://my.pconline.com.cn/passport/opens/authorize.jsp?type=qzone_online&amp;return='+window.location+'&amp;bind_url=http%3A%2F%2Fmy.pclady.com.cn%2Fpassport%2Fopens%2Fopen_bind.jsp'"
 		 class="tQQ"></a>
-
+	
 
 	 </body>
 </html>

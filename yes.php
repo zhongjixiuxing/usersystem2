@@ -11,7 +11,7 @@
 
 <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js"></script>
 <script type="text/javascript">
-	function qqInfo(){  //qq用户登录后的回调处理函数
+	function qqInfo(){
 		alert("qqInfo function ");
 		$.ajax({
 			url:"/UserSystem2/hs.php",//要请求的servlet
@@ -26,13 +26,14 @@
 		});
 	}
 </script>
-
 <script type="text/javascript">
+	
 	QC.Login.getMe(function(openId, accessToken){
+		
 		loginController(openId, accessToken);
 	});
 
-	function loginController(openId, accessToken){  //qq登录后的回调函数
+	function loginController(openId, accessToken){
 		alert("loginController : "+openId);
 		$.ajax({
 			url:"/UserSystem2/hs.php",//要请求的servlet
@@ -51,7 +52,8 @@
 
 </head>
 <body>
-	<h1 style="color: red">正在处理......</h1>
-<!--	<button onclick="qqInfo()"> 点我</button>-->
+	yes page
+	
+	<button onclick="qqInfo()"> 点我</button>
 </body>
 </html>

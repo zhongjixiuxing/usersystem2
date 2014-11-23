@@ -43,7 +43,9 @@
 	echo "刚才用户的uuid : ".$u->getUuid()."<br>";
 	
 	$emailUtils->sendToUser($u);
-	
+	if($u != null){  //
+		header("location: http://anxing.wicp.net/UserSystem2/user/html/register_success.html");
+	}
 	
 	
 /*************************到达这步说明用户注册已经成功了，下面可以执行注册
@@ -94,6 +96,7 @@
 			$error = true;
 			echo '<script>alert("用户名不能为空！");window.history.go(-1);</script>';
 		}
+		
 		
 		
 		//验证码校验 

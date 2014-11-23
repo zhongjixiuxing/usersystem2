@@ -11,10 +11,6 @@
 		private $openId;
 		private $accessToken;
 		private $nickname;
-		private $gender; //性别
-		private $province; //省份；
-		private $city;  //城市；
-		private $year; //出生城市；
 		
 		
 		function __construct(){}

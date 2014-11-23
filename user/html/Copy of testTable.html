@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>jQuery的跨浏览器可编辑表格</title>
+
+<script src="http://apps.bdimg.com/libs/jquery/2.0.0/jquery.min.js"></script>
+<script type="text/javascript" src="js/editTable.js"></script>
+<script src="http://apps.bdimg.com/libs/angular.js/1.2.15/angular.min.js"></script>
+
+<script type="text/javascript">
+	var new_id = 1; //当用户新增数据时，new_id自动增长
+	var oldText = '';
+	
+	$(document).ready(function(){
+		$("#bt_update").click(function(){
+			var id = $(this).attr("id");
+			//updateToServer();
+			//getNewRecords();
+			updateToServer();
+		});
+		$("#bt_modify").click(function(){
+			var id = $(this).attr("id");
+			alert("id : "+id);
+		});
+		$("#bt_delete").click(function(){
+			var id = $(this).attr("id");
+			//ConvertToJsonForJq();
+			deleteRows();
+		});
+		$("#bt_new").click(function(){
+			$("#table1").append("<tr id=tr_new_"+new_id+">"
+					+"<td class='box'><input type='checkbox' id=new_"+new_id+" /></td>" 
+					+"<td class='name'></td>"
+					+"<td class='city'></td>"
+					+"<td class='country'></td>"
+					+"</tr>");
+			new_id++;
+		});
+		
+		//单击这些td时，创建文本框 
+		$(document).on("click","td",function(){
+
+			
+			//创建文本框对象 
+			var inputobj = $("<input type='text'>"); 
+			//获取当前点击的单元格对象 
+			var tdobj = $(this); 
+			//获取单元格中的文本 
+			var text = tdobj.html(); 
+			oldText = text;
+
+			//如果单元表格里面是checkbox,要返回true即可
+			var checkbox = tdobj.children("input")[0];
+			if($(checkbox).attr("type") == "checkbox"){
+				return true;
+			}
+			
+			
+			//如果当前单元格中有文本框，就直接跳出方法 
+			//注意：一定要在插入文本框前进行判断 
+			if(tdobj.children("input").length>0){ 
+				return false; 
+			} 
+			
+			//清空单元格的文本 
+			tdobj.html(""); 
+			inputobj.css("border","0") 
+				.css("font-size",tdobj.css("font-size"))
+				.css("font-family",tdobj.css("font-family")) 
+				.css("background-color",tdobj.css("background-color")) 
+				.css("color","#C75F3E") 
+				.width(tdobj.width()) 
+				.val(text) 
+				.appendTo(tdobj); 
+			inputobj.get(0).select(); 
+			//阻止文本框的点击事件 
+			inputobj.click(function(){ 
+				return false;
+			}); 
+			
+			inputobj.blur(function(){ 
+				var inputtext = $(this).val(); 
+				tdobj.html(inputtext); 
+				
+			});
+				 
+			//处理文本框上回车和esc按键的操作 
+			//jQuery中某个事件方法的function可以定义一个event参数，jQuery会屏蔽浏览器的差异，传递给我们一个可用的event对象 
+			inputobj.keyup(function(event){ 
+				//获取当前按键的键值 
+				//jQuery的event对象上有一个which的属性可以获得键盘按键的键值 
+				var keycode = event.which; 
+				//处理回车的情况 
+				if(keycode==13){ 
+					//获取当前文本框的内容 
+					var inputtext = $(this).val(); 
+					//将td的内容修改成文本框中的内容 
+					tdobj.html(inputtext); 
+				} 
+				//处理esc的情况 
+					if(keycode == 27){
+					//将td中的内容还原成text 
+					tdobj.html(text); 
+				} 
+			}); 
+		});
+	}); 
+
+	/**
+	* 	测试使用jquery将json字符串转换成json对象数组 
+	*/
+	function ConvertToJsonForJq() {  
+	    //var testJson = '{ "name": "小强", "age": 16 }';  
+	    //'{ name: "小强", age: 16 }' (name 没有使用双引号包裹)  
+	    //"{ 'name': "小强", 'age': 16 }"(name使用单引号) 
+	    
+	    var testJson = '[{"name": "小强", "age": 16 },{"name": "张三", "age": 21}]';   
+	    testJson = $.parseJSON(testJson);  
+	    for(var x=0; x<testJson.length; x++){
+			alert("name : "+testJson[x]["name"]);
+		}
+	};
+
+
+	/**
+	* 将用户新插入的数据保存到服务器上
+	*/
+	function updateToServer(){
+		/*
+		*	1、获取用户插入的新行，并获取数据；
+		*	2、判断用户的数据输入的数据合法性；（只有一个字段不为空都是合法，全部为空则不提交）
+		*	3、将用户的数据拼装成Json字符串，通过Jquery ajax的方式提交到服务端
+		*	4、更新本地的UI属性
+		*/
+		
+		var records = getNewRecords();
+		var json = getNewRecordsJsonStr(records);
+	    $.ajax({
+			url:"/UserSystem2/test2.php",//要请求的servlet
+			data:{json:json},//给服务器的参数
+			type:"POST",
+			async:false,//是否异步请求，如果是异步，那么不会等服务器返回，我们这个函数就向下运行了。
+			cache:false,
+			success:function(result){
+				alert("result : "+result);
+				return true;
+			}
+		});
+	}
+
+	/**
+	*	根据提供的新用户数据数组生成Json字符串 
+	*/
+	function getNewRecordsJsonStr(records){
+		var json = '[';
+
+		for(var x=0; x<records.length; x++){
+			json += "{";
+
+			json +="\"name\":\""+records[x]['name']+"\",";
+			json +="\"city\":\""+records[x]['city']+"\",";
+			json +="\"country\":\""+records[x]['country']+"\"";
+			
+			json += "}";
+			if(x != records.length-1)
+				json += ',';
+		}
+		
+		json += ']';
+		return json;
+	}
+
+	/**
+	*	获取用户新插入的数据
+	*/
+	function getNewRecords(){
+		var records = new Array();
+		var inputs = $("td input");
+		for(var x=0; x<inputs.size(); x++){
+			if($(inputs[x]).attr("type") == "checkbox"){
+				flag = $(inputs[x]).prop("checked"); //prop是jq1.6以后的函数，之前使用的是attr
+				if(flag == true){
+					id = $(inputs[x]).attr("id");
+					id = id.substr(4);
+					tds = $("#tr_new_"+id).children();
+					record = new Array();
+					for(y=0; y<tds.size(); y++){
+						cla = $(tds[y]).attr("class");
+						if(cla=='name' || cla=='city' || cla=='country'){
+							val = $(tds[y]).text();
+							record[cla] = val;
+						}
+					}
+					records[records.length] = record;
+				}
+			}
+		}
+		return records;
+	}
+	
+	/**
+	* 删除用户选中的行
+	*	1、获取用户选中checkboe对应的行数据ID
+	*	2、将ID组装成json字符成用jquery的ajax发送到后台的php
+	*/
+	function deleteRows(){
+		var ids = getDeleteId();
+		if(!confirm("您确定要删除 "+ids.length+" 记录？")){
+		   return false;
+		}
+		deleteLocalRecord();
+		ids = getDeleteId(); //先删除本地的记录，在请求服务端删除服务器中的记录 
+		var json = getDeleteJsonStr(ids);
+		alert("json : "+json);
+		
+		$.ajax({
+			url:"/UserSystem2/user/json/json2.php",//要请求的servlet
+			data:{json:json,method:"delete"},//给服务器的参数
+			type:"POST",
+			async:false,//是否异步请求，如果是异步，那么不会等服务器返回，我们这个函数就向下运行了。
+			cache:false,
+			success:function(result){ //返回的结果是服务端成功删除的数据Id
+				alert("init");
+				var ids = $.parseJSON(result);
+				for(var x=0; x<ids.length; x++){
+					alert("id : "+ids[x]);
+					 $("#"+ids[x]).remove(); 
+				}
+				alert("end");
+				
+				return true;
+			}
+		});
+	};
+
+	/**
+	* 删除本地用户选中的记录
+	*/
+	function deleteLocalRecord(){
+		var inputs = $("td input");
+		for(var x=0; x<inputs.size(); x++){
+			if($(inputs[x]).attr("type") == "checkbox"){
+				flag = $(inputs[x]).prop("checked"); //prop是jq1.6以后的函数，之前使用的是attr
+				if(flag == true){
+					id = $(inputs[x]).attr("id");
+					var flag = id.indexOf("new_");
+					id = id.substr(4);
+					if(flag == 0){
+						 $("#tr_new_"+id).remove(); 
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	*获取用户要删除数据的Id
+	*/
+	function getDeleteId(){
+		var inputs = $("td input");
+		var ids = new Array();
+		alert("checksize : "+inputs.size());
+		for(var x=0; x<inputs.size(); x++){
+			if($(inputs[x]).attr("type") == "checkbox"){
+				flag = $(inputs[x]).prop("checked"); //prop是jq1.6以后的函数，之前使用的是attr
+				if(flag == true){
+					id = $(inputs[x]).attr("id");
+					alert("id : "+id);
+					id = id.substr(9);  //去掉	checkbox_ 前缀
+					ids[ids.length] =id;					
+				}
+			}
+		}
+		return ids;
+	};
+
+	/**
+	*	生成删除的数据的Json字符串
+	*		需要提供删除数据的Id数组
+	*/
+	function getDeleteJsonStr(ids){
+		var str = '[';
+		for(var x=0; x<ids.length; x++){
+			str += "{";
+			str += "\"id\":\""+ids[x]+"\"";
+			str += "}";
+			if(x != ids.length-1){
+				str += ",";
+			}
+		}
+		str += ']';
+		return str;
+	}
+
+	function del(){
+		var users = new Array();
+		var trs = $("tr");
+		for(var x=0; x<trs.size(); x++){
+			var obj = trs[x];
+			var id = $(trs[x]).attr("id");
+			if(typeof(id) != 'undefined'){
+				if(id != null){
+					name = $(obj).find(".name").text();
+					city = $(obj).find(".city").text();
+					country = $(obj).find(".country").text();
+					user = new Array(name, city, country);
+					users[users.length] = user;
+				}
+			}else{
+				
+			}
+		}
+		
+		for(x=0; x<users.length; x++){
+			user = users[x];
+			alert("name : "+user[0]);
+			alert("city : "+user[1]);
+			("country : "+user[2]);
+		}
+	}
+	
+</script>
+
+<script>
+	function customersController($scope,$http) {
+		$scope.firstName = "huang";
+		$scope.lastName =  "hang";
+	  	$http.get("http://anxing.wicp.net/UserSystem2/user/json/json2.php?method=getInfo") 
+	  		.success(function(response) {
+		  		alert("yes : "+response);
+		 	$scope.users = response;
+		});
+	}
+</script>
+
+<style>
+body {
+	font-size: 18px;
+}
+
+table {
+	color: #4F6B72;
+	border: 1px solid #C1DAD7;
+	border-collapse: collapse;
+	width: 400px;
+}
+
+th {
+	width: 50%;
+	border: 1px solid #C1DAD7;
+}
+
+td {
+	width: 50%;
+	border: 1px solid #C1DAD7;
+}
+</style>
+
+</head>
+<body ng-app="" ng-controller="customersController">
+
+	{{firstName}} | {{lastName}}
+<div align="center" style="margin-top: 50px">
+		<table id="table1">
+			<thead>
+				<tr>
+					<th colspan="4">鼠标点击表格就可以编辑</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>				
+					<th></th>
+					<th>Name</th>
+					<th>City</th>
+					<th>Country</th>
+				</tr>
+				<tr ng-repeat="user in users" id="{{user.Id}}">
+					<td class="box" ><input type="checkbox" id="checkbox_{{user.Id}}" /></td>
+					<td class="name">{{user.Name}}</td>
+					<td class="city">{{user.City}}</td>
+					<td class="country">{{user.Country}}</td>
+				</tr>
+			</tbody>
+		</table>
+			<button style="font-size: 20px; color: green;" id="bt_new">新增</button>
+			<button style="font-size: 20px; color: green;" id="bt_update">update</button>
+			<button style="font-size: 20px; color: green;" id="bt_delete">delete</button>
+			<button style="font-size: 20px; color: green;" id="bt_modify">modify</button>
+	</div>
+</body>
+</html>

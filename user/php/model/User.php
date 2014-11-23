@@ -15,7 +15,6 @@
 		private $vdate; //激活有效时间；
 		private $vstatus; //激活状态； //从数据库中拿出是String类型的值
 		private $regtime; //注册时间；
-		private $openId;
 	
 		public function __toString(){
 			$result = $this->name." : ".$this->pw." : ".$this->email." : ".$this->id;
@@ -36,7 +35,7 @@
 		 * @param unknown_type $value
 		 */
 		public function __set($property_name, $value){
-			$this->$property_name = $value;
+			$this->property_name = $value;
 		}
 		
 		/**
