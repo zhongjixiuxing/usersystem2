@@ -1,7 +1,7 @@
 <?php
 /*
  * 前台传递进来Json数据，进行处理
- * hh
+ * 
  * */
 
 $json = $_POST['json'];
